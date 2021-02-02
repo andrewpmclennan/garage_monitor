@@ -6,7 +6,6 @@ project(Garage_Monitor)
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(garage_monitor_client src/hello2.c)
 
 # Sets the relative path so that the compile tools can be found. 
 if (variable)
@@ -16,4 +15,5 @@ else()
 endif()
 
 # add executable
-add_executable(garage_monitor_server src/hello.c)
+add_executable(garage_monitor_client src/garage_client.c)
+add_executable(garage_monitor_server src/garage_server.c)
