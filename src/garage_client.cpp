@@ -7,6 +7,8 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 
+#include "messageStructure.h"
+
 void error(const char *msg)
 {
     perror(msg);
@@ -43,7 +45,11 @@ int main(int argc, char *argv[])
         error("ERROR connecting");
     printf("Please enter the message: ");
     bzero(buffer,256);
-    fgets(buffer,255,stdin);
+
+    MessageStructure msg;
+    std::string data = msg.serialise();
+
+    strcpy(buffer,data.c_str());
     n = write(sockfd,buffer,strlen(buffer));
     if (n < 0) 
          error("ERROR writing to socket");
