@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "Build everything"
+./build_gcc
+./build_arm
+./build_test

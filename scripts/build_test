@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Build test files."
+
 cd ../
 
 if [ ! -d build ]; then
@@ -8,7 +10,7 @@ fi
 
 cd build
 
-cmake -D arm_compile="GCC" ..
+cmake -D arm_compile="TEST" ..
 make clean
 make
 
@@ -16,4 +18,4 @@ if [ ! -d ../bin ]; then
      mkdir ../bin
 fi
 
-cp garage_monitor_client ../bin/.
+cp *_test ../bin/.

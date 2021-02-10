@@ -2,8 +2,18 @@
 
 cd ../
 
-mkdir build
+if [ ! -d build ]; then
+    mkdir build
+fi
 
 cd build
 
-cmake -D variable="true" ..
+cmake -D arm_compile="ARM" ..
+make clean
+make
+
+if [ ! -d ../bin ]; then
+     mkdir ../bin
+fi
+
+cp garage_monitor_server ../bin/.

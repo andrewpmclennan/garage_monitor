@@ -46,7 +46,8 @@ int main(int argc, char *argv[])
     printf("Please enter the message: ");
     bzero(buffer,256);
 
-    MessageStructure msg;
+    MessageStructure msg(MessageStructure::senderId::CLIENT);
+    msg.SetArm();
     std::string data = msg.serialise();
 
     strcpy(buffer,data.c_str());
