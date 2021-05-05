@@ -23,9 +23,9 @@ elseif(arm_compile STREQUAL "TEST")
     
 endif()
 
-add_executable(garage_monitor_client src/garage_client.cpp src/messageStructure.cpp)
-add_executable(garage_monitor_server src/garage_server.cpp)
-add_executable(messageStructure_test test/messageStructure_test.cpp src/messageStructure.cpp)
+add_executable(garage_monitor_client src/garage_client.cpp src/messageStructure.cpp src/clientConnection.cpp)
+add_executable(garage_monitor_server src/garage_server.cpp )
+add_executable(messageStructure_test test/messageStructureTest.cpp src/messageStructure.cpp src/clientConnection.cpp)
 
 
 

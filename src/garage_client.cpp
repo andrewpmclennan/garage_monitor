@@ -8,6 +8,7 @@
 #include <netdb.h> 
 
 #include "messageStructure.h"
+#include "clientConnection.h"
 
 void error(const char *msg)
 {
@@ -15,50 +16,25 @@ void error(const char *msg)
     exit(0);
 }
 
+//TODO: Add a menu so that you can pick what command you want to send.
+//TODO: Rewrite server code to be a class
+//TODO: Add Handler to the server class for the different commands that can be sent
+//TODO: Add command line options for setting the host.
+
 int main(int argc, char *argv[])
 {
-    int sockfd, portno, n;
-    struct sockaddr_in serv_addr;
-    struct hostent *server;
+	ClientConnection client;
 
-    char buffer[256];
-    if (argc < 3) {
-       fprintf(stderr,"usage %s hostname port\n", argv[0]);
-       exit(0);
-    }
-    portno = atoi(argv[2]);
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) 
-        error("ERROR opening socket");
-    server = gethostbyname(argv[1]);
-    if (server == NULL) {
-        fprintf(stderr,"ERROR, no such host\n");
-        exit(0);
-    }
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr, 
-         (char *)&serv_addr.sin_addr.s_addr,
-         server->h_length);
-    serv_addr.sin_port = htons(portno);
-    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
-        error("ERROR connecting");
-    printf("Please enter the message: ");
-    bzero(buffer,256);
+	std::string target = "localhost";
+	client.init(target);
+	client.startConnection();
 
     MessageStructure msg(MessageStructure::senderId::CLIENT);
     msg.SetArm();
     std::string data = msg.serialise();
 
-    strcpy(buffer,data.c_str());
-    n = write(sockfd,buffer,strlen(buffer));
-    if (n < 0) 
-         error("ERROR writing to socket");
-    bzero(buffer,256);
-    n = read(sockfd,buffer,255);
-    if (n < 0) 
-         error("ERROR reading from socket");
-    printf("%s\n",buffer);
-    close(sockfd);
+    client.sendMessage(data);
+    client.closeConnection();
+
     return 0;
 }
