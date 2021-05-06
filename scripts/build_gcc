@@ -17,3 +17,4 @@ if [ ! -d ../bin ]; then
 fi
 
 cp garage_monitor_client ../bin/.
+cp garage_monitor_server ../bin/.

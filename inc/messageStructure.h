@@ -36,6 +36,8 @@ class MessageStructure
 			EMPTY_MESSAGE
 		};
 
+		MessageStructure& operator=(const MessageStructure &rhs);
+
 		std::string serialise();
 		void deserialise(const std::string &object);
 		const messageData GetPayload() const;

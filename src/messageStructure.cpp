@@ -25,6 +25,18 @@ MessageStructure::~MessageStructure()
 
 }
 
+MessageStructure& MessageStructure::operator=(const MessageStructure &rhs)
+{
+	this->payload = rhs.payload;
+	this->direction = rhs.direction;
+	this->pin_number = rhs.pin_number;
+	this->pin_state = rhs.pin_state;
+	this->current_temp = rhs.current_temp;
+	this->current_humidity = rhs.current_humidity;
+	this->response_message = rhs.response_message;
+	return *this;
+}
+
 void MessageStructure::SetArm()
 {
 	payload = ARM;

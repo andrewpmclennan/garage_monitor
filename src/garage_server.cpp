@@ -8,57 +8,91 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-void error(const char *msg)
-{
-    perror(msg);
-    exit(1);
-}
+#include "messageStructure.h"
+#include "serverConnection.h"
+#include <iostream>
+
+void processMessage(MessageStructure &msg);
+bool run = true;
 
 int main(int argc, char *argv[])
 {
-     int sockfd, newsockfd, portno;
-     socklen_t clilen;
-     char buffer[256];
-     struct sockaddr_in serv_addr, cli_addr;
-     int n;
-     if (argc < 2) {
-         fprintf(stderr,"ERROR, no port provided\n");
-         exit(1);
-     }
-     sockfd = socket(AF_INET, SOCK_STREAM, 0);
-     if (sockfd < 0) 
-        error("ERROR opening socket");
-     bzero((char *) &serv_addr, sizeof(serv_addr));
-     portno = atoi(argv[1]);
-     serv_addr.sin_family = AF_INET;
-     serv_addr.sin_addr.s_addr = INADDR_ANY;
-     serv_addr.sin_port = htons(portno);
-     if (bind(sockfd, (struct sockaddr *) &serv_addr,
-              sizeof(serv_addr)) < 0) 
-              error("ERROR on binding");
-     listen(sockfd,5);
-     clilen = sizeof(cli_addr);
-     for (int i = 0; i < 2; i++)
-     {
-		 newsockfd = accept(sockfd,
-					 (struct sockaddr *) &cli_addr,
-					 &clilen);
-		 if (newsockfd < 0)
-			  error("ERROR on accept");
-		 bzero(buffer,256);
-		 n = read(newsockfd,buffer,255);
-		 if (n < 0) error("ERROR reading from socket");
-		 printf("Here is the message: %s\n",buffer);
-		 n = write(newsockfd,"I got your message",18);
-		 if (n < 0) error("ERROR writing to socket");
-		 close(newsockfd);
-     }
+	MessageStructure msg(MessageStructure::senderId::SERVER);
+	ServerConnection server;
 
-     close(sockfd);
-     return 0; 
+	std::string data;
+	server.init(data);
+	server.startListening();
+	while (run)
+	{
+		if (server.getData(msg))
+		{
+			processMessage(msg);
+		}
+		else
+		{
+			server.closeListener();
+			server.startListening();
+		}
+	}
+	server.closeConnection();
+    return 0;
 }
 
-void processMessage()
+void processMessage(MessageStructure &msg)
 {
-
+	switch(msg.GetPayload())
+	{
+	case MessageStructure::messageData::ARM:
+	{
+		std::cout << "ARM" << std::endl;
+		break;
+	}
+	case MessageStructure::messageData::DISARM:
+	{
+		std::cout << "DISARM" << std::endl;
+		break;
+	}
+	case MessageStructure::messageData::EMPTY_MESSAGE:
+	{
+		std::cout << "EMPTY" << std::endl;
+		break;
+	}
+	case MessageStructure::messageData::HUMID:
+	{
+		std::cout << "HUMID" << std::endl;
+		break;
+	}
+	case MessageStructure::messageData::MESSAGE_RELAY:
+	{
+		std::cout << "RELAY" << std::endl;
+		break;
+	}
+	case MessageStructure::messageData::READ_PIN:
+	{
+		std::cout << "READPIN" << std::endl;
+		break;
+	}
+	case MessageStructure::messageData::SHUTDOWN:
+	{
+		std::cout << "SHUTDOWN" << std::endl;
+		run = false;
+		break;
+	}
+	case MessageStructure::messageData::TEMP:
+	{
+		std::cout << "TEMP" << std::endl;
+		break;
+	}
+	case MessageStructure::messageData::WRITE_PIN:
+	{
+		std::cout << "WRITEPIN" << std::endl;
+		break;
+	}
+	default:
+	{
+		std::cout << "How did you get here?" << std::endl;
+		break;
+	}
+	}
 }
